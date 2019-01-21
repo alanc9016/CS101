@@ -9,26 +9,26 @@
 
  
 <a name="InsertSortLinked.c"></a>
-###InsertSortLinekd
+### InsertSortLinked
 - Uses operations from List.c to sort a doubly-linked list and print it to a file
 
 <a name="List.c"></a>
-###List.c
+### List.c
 - Implementation file that contains the list ADT module  
 
 <a name="List.h"></a>
-###List.h
+### List.h
 - Header file that contains List function declarations
 
 <a name="Makefile"></a>
-###Makefile
+### Makefile
 - Will create an executable called InsertSortLinked and will include a clean  utility that removes all object files, including InsertSortLinked. 
 
 <a name="ListClient.c"></a>
-###ListClient.c
+### ListClient.c
 - This file has test data that will be used as inputs to test the program. 
 
-##Instructions
+## Instructions
 - Run make to create the executable InsertSortLinked
 - InsertSortLinked Usage: InsertSortLinked < input file > < output file >
 
