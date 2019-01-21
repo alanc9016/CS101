@@ -40,11 +40,10 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    ListObj* A;
+    ListObj* A = newList();
 
     while( fgets(line, MAX_LEN, in) != NULL)
     {
-        A = newList();
         token = strtok(line, " \n");
         tokenlist[0] = '\0';
         
@@ -60,7 +59,12 @@ int main(int argc, char* argv[])
         InsertionSort(A);
         printList(out, A);
         freeList(A);
+        A = newList();
     }
+
+    freeList(A);
+    fclose(in);
+    fclose(out);
 
     return 0;
 }
