@@ -6,12 +6,18 @@
 
 #include "List.h"
 #include <limits.h>
+#include <string.h>
+
 void InsertionSort(ListObj* L);
+
+#define MAX_LEN 160
 
 int main(int argc, char* argv[])
 {
     FILE *in, *out;
-    char line[128];
+    char line[MAX_LEN];
+    char tokenlist[MAX_LEN];
+    char* token;
 
     if(argc != 3)
     {
@@ -34,28 +40,27 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    ListObj* A = newList();
-    while(fgets(line, sizeof(line), in) != NULL)
+    ListObj* A;
+
+    while( fgets(line, MAX_LEN, in) != NULL)
     {
-        int a, b, c;
-
-        if (sscanf(line, "%d %d %d", &a, &b, &c) == 3)
+        A = newList();
+        token = strtok(line, " \n");
+        tokenlist[0] = '\0';
+        
+        while( token != NULL )
         {
-            append(A,a);
-            append(A,b);
-            append(A,c);
+            strcat(tokenlist, "   ");
+            strcat(tokenlist, token);
+            strcat(tokenlist, "\n");
+            append(A, atoi(token));
+            token = strtok(NULL, " \n");
         }
-
 
         InsertionSort(A);
         printList(out, A);
         freeList(A);
-        A = newList();
     }
-
-    freeList(A);
-    fclose(in);
-    fclose(out);
 
     return 0;
 }
