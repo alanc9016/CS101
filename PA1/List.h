@@ -33,7 +33,7 @@ typedef ListObj* List;
 // Constructors-Destructors -------------------------------------------------------------------
 ListObj* newList(void);         // returns a List which points to a new empty list object
 
-void freeList(List pL);         // frees all the heap memory associated with its List* argument,
+void freeList(List *pL);         // frees all the heap memory associated with its List* argument,
                                 // and sets *pL to NULL
 
 // Access functions ----------------------------------------------------------------------------

@@ -24,10 +24,10 @@ List newList(void)
     return L;
 }
 
-void freeList(List pL)
+void freeList(List *pL)
 {
-    clear(pL);
-    free(pL);
+    clear(*pL);
+    free(*pL);
 }
 
 int length(List L)
@@ -39,8 +39,8 @@ int frontValue(List L)
 {
     if(length(L) == 0)
     {
-        printf("List is Empty!");
-        return -1;
+        printf("LCan't get Front since List is Empty!");
+        exit(1);
     }
     else
     {
@@ -52,8 +52,8 @@ int backValue(List L)
 {
     if(length(L) == 0)
     {
-        printf("List is Empty!");
-        return -1;
+        printf(" Can't get Back Value Since List is Empty!");
+        exit(1);
     }
     else
     {
@@ -65,8 +65,8 @@ int getValue(Node N)
 {
     if(N == NULL)
     {
-        printf("Node is NULL!\n");
-        return -1;
+        printf("Node Doesn't Exist!\n");
+        exit(1);
     }
 
     return N->data;
@@ -105,21 +105,23 @@ void clear(List L)
 NodeObj* getFront(List L)
 {
     if(L->size == 0)
-        printf("List is Empty!\n");
+    {
+        printf(" Can't get Front since list is Empty!\n");
+        exit(1);
+    }
     else
         return L->head;
-
-    return NULL;
 }
 
 NodeObj* getBack(List L)
 {
     if(L->size == 0)
-        printf("List is Empty!\n");
+    {
+        printf("Can't get Back since list is Empty!\n");
+        exit(1);
+    }
     else
         return L->tail;
-
-    return NULL;
 }
 
 NodeObj* getPrevNode(Node N)
@@ -237,7 +239,7 @@ void deleteFront(List L)
     if(head == NULL)
     {
         printf("(deletefront)List is Empty");
-        return;
+        exit(1);
     }
     else if(L->size == 1)
     {
@@ -263,7 +265,7 @@ void deleteBack(List L)
     if(L->head == NULL)
     {
         printf("(deleteBack)List is Empty!\n");
-        return;
+        exit(1);
     }
     else if(L->size == 1)
     {
@@ -314,8 +316,8 @@ void printList(FILE* out, List L)
 
     if(L->head == NULL)
     {
-        fprintf(out,"(print)List is empty!\n");
-        return;
+        printf("Can't print List since it's empty");
+        exit(1);
     }
     else
     {
