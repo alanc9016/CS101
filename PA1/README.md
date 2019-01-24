@@ -9,7 +9,7 @@
 
  
 <a name="InsertSortLinked.c"></a>
-### InsertSortLinked
+### InsertSortLinked.c
 - Uses operations from List.c to sort a doubly-linked list and print it to a file
 
 <a name="List.c"></a>
@@ -29,9 +29,10 @@
 - This file has test data that will be used as inputs to test the program. 
 
 ## Instructions
-- Run make to create the executable InsertSortLinked
-- InsertSortLinked Usage: InsertSortLinked < input file > < output file >
-
+- make makes InsertSortLinked
+- make ListClient makes ListClient
+- ./InsertionSort input.txt output.txt
+- ./ListClient
 ## Author
 
 * **Alan Caro** 

@@ -31,7 +31,7 @@ typedef struct ListObj
 typedef ListObj* List;
 
 // Constructors-Destructors -------------------------------------------------------------------
-ListObj* newList(void);         // returns a List which points to a new empty list object
+List newList(void);         // returns a List which points to a new empty list object
 
 void freeList(List *pL);         // frees all the heap memory associated with its List* argument,
                                 // and sets *pL to NULL
@@ -54,17 +54,17 @@ int equals(List A, List B);   // Returns 1 if List A and List B are the same int
 
 void clear(List L);            // Resets this List to the empty state.
 
-NodeObj* getFront(List L);     // If List is non-empty, returns the front Node, without
+Node getFront(List L);     // If List is non-empty, returns the front Node, without
                                 // changing the List. Otherwise, does nothing.
 
-NodeObj* getBack(List L);      // If List is non-empty, returns the back Node, without
+Node getBack(List L);      // If List is non-empty, returns the back Node, without
                                 // changing the List. Otherwise, does nothing
 
-NodeObj* getPrevNode(Node N);    // Without changing any values, makes Node N reference
+Node getPrevNode(Node N);    // Without changing any values, makes Node N reference
                                 // the previous Node on its List. If there is no
                                 // previous Node, sets N to NULL.
 
-NodeObj* getNextNode(Node N);    // Without changing any values, makes Node N reference
+Node getNextNode(Node N);    // Without changing any values, makes Node N reference
                                 // the next Node on its List. If there is no
                                 // next Node, sets N to NULL.
 

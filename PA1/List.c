@@ -102,7 +102,7 @@ void clear(List L)
     }
 }
 
-NodeObj* getFront(List L)
+Node getFront(List L)
 {
     if(L->size == 0)
     {
@@ -113,7 +113,7 @@ NodeObj* getFront(List L)
         return L->head;
 }
 
-NodeObj* getBack(List L)
+Node getBack(List L)
 {
     if(L->size == 0)
     {
@@ -124,7 +124,7 @@ NodeObj* getBack(List L)
         return L->tail;
 }
 
-NodeObj* getPrevNode(Node N)
+Node getPrevNode(Node N)
 {
     if(N->prev == NULL)
         N = NULL;
@@ -134,7 +134,7 @@ NodeObj* getPrevNode(Node N)
     return N;
 }
 
-NodeObj* getNextNode(Node N)
+Node getNextNode(Node N)
 {
     if(N->next == NULL)
         N = NULL;
