@@ -6,7 +6,6 @@
 - [List.h](#List.h)
 - [Makefile](#Makefile)
 - [ListClient.c](#ListClient.c)
-- [input.txt](#input.txt)
 
  
 <a name="InsertSortLinked.c"></a>
@@ -29,9 +28,6 @@
 ### ListClient.c
 - This file has test data that will be used as inputs to test the program. 
 
-<a name="input.txt"></a>
- ### input.txt
-- Contains test cases to test the insertion sort algorithm 
 
 ## Instructions
 - make makes InsertSortLinked
