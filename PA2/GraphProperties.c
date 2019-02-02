@@ -39,15 +39,44 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
+    for(int i = 0; i < 160; i++)
+    {
+        tokenlist[i] = 'a';
+    }
 
-    Graph G = newGraph(4);
-    int theFoundValue;
-    addEdge(G,3,1);
-    addEdge(G,3,2);
-    addEdge(G,1,3);
-    addEdge(G,4,3);
-    addEdge(G,4,2);
-    addEdge(G,4,3);
+    fgets(line, MAX_LEN, in);
+    token = strtok(line, " \n");
+    tokenlist[0] = '\0';
+
+    while (token != NULL)
+    {
+        strcat(tokenlist, "");
+        strcat(tokenlist, token);
+        strcat(tokenlist, " ");
+        token = strtok(NULL, " \n");
+    }
+
+    Graph G = newGraph(tokenlist[0] - '0');
+    int counter = 0;
+    int j = 0;
+
+    for(int i = 1; i < 160; i++)
+        if(isdigit(tokenlist[i]))
+            counter++;
+
+    int array[counter];
+
+    for(int i = 1; i < 160; i++)
+    {
+        if(isdigit(tokenlist[i]))
+        {
+            array[j] = tokenlist[i];
+            j++;
+        }
+    }
+
+    for(int i = 0; i < counter; i+=2)
+        addEdge(G, array[i] - '0', array[i+1] - '0');
 
     while( fgets(line, MAX_LEN, in) != NULL)
     {
@@ -76,19 +105,37 @@ int main(int argc, char* argv[])
         else if(strstr(tokenlist, "GetNeighborCount ") != NULL)
         {
             char *ret = strstr(tokenlist, "GetNeighborCount ");
+
             fprintf(out,"GetNeighbor Count %d\n", atoi(ret+17));
+
+            if(getNeighborCount(G,atoi(ret+17)) == -1)
+                fprintf(out,"ERROR\n");
+            else
             fprintf(out,"%d\n", getNeighborCount(G,atoi(ret+17)));
         }
         else if(strstr(tokenlist, "PathExists ") != NULL)
         {
             char *ret = strstr(tokenlist, "PathExists ");
-            unvisitAll(G);
-            fprintf(out,"PathExists %d %d\n",atoi(ret+11), atoi(ret+13));
-            theFoundValue = pathExistsRecursive(G,atoi(ret+11), atoi(ret+13));
-            if(theFoundValue == FOUND)
-                fprintf(out,"YES\n");
+
+            if(atoi(ret+11) == 0 || atoi(ret+13) == 0)
+            {
+                if(atoi(ret+11) == 0)
+                    fprintf(out,"PathExists %d\n",atoi(ret+13));
+                else
+                    fprintf(out,"PathExists %d\n",atoi(ret+11));
+                fprintf(out,"ERROR\n");
+            }
             else
-                fprintf(out,"NO\n");
+            {
+                int theFoundValue;
+                unvisitAll(G);
+                fprintf(out,"PathExists %d %d\n",atoi(ret+11), atoi(ret+13));
+                theFoundValue = pathExistsRecursive(G,atoi(ret+11), atoi(ret+13));
+                if(theFoundValue == FOUND)
+                    fprintf(out,"YES\n");
+                else
+                    fprintf(out,"NO\n");
+            }
         }
     }
 

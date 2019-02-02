@@ -7,43 +7,34 @@
 - [Graph.c](#Graph.c)
 - [Graph.h](#Graph.h)
 - [Makefile](#Makefile)
-- [ListClient.c](#ListClient.c)
-
  
 <a name="GraphProperties.c"></a>
 ### GraphProperties.c
-- Uses operations from List.c to sort a doubly-linked list and print it to a file
+- Uses operations from Graph.c and List.c to manipulate a Graph and print it to a file.
 
 <a name="List.c"></a>
 ### List.c
-- Implementation file that contains the list ADT module  
+- Implementation file that contains the list ADT module. 
 
 <a name="List.h"></a>
 ### List.h
-- Header file that contains List function declarations
+- Header file that contains List function declarations.
 
 <a name="Graph.c"></a>
 ### Graph.c
--  fdasf
+-  Implementation file that contains the Graph ADT module.
 
 <a name="List.h"></a>
 ### Graph.h
--   asdfa
+-   Header file that contains Graph function declarations.
 
 <a name="Makefile"></a>
 ### Makefile
-- Will create two executables called InsertSortLinked and ListClient includes a clean  utility that removes all object files, including InsertSortLinked and ListClient. 
-
-<a name="ListClient.c"></a>
-### ListClient.c
-- This file has test data that will be used as inputs to test the program. 
-
+- Will create an executable called GraphProperties includes a clean  utility that removes all object files, including GraphProperties. 
 
 ## Instructions
-- make makes InsertSortLinked
-- make ListClient makes ListClient
-- ./InsertionSort input.txt output.txt
-- ./ListClient
+- make makes GraphProperties
+- ./GraphProperties input.txt output.txt
 ## Author
 
 - **Alan Caro** 

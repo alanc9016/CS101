@@ -125,6 +125,8 @@ int pathExistsRecursive(Graph G, int w, int v)
 
 void printGraph(FILE* out, Graph G)
 {
+    fprintf(out, "%d, ", G->numVertices);
+
     for(int i = 0; i <= G->numVertices; i++)
     {
         prepend(G->neighbors[i],i);
@@ -139,10 +141,6 @@ void printGraph(FILE* out, Graph G)
             }
             temp = getNextNode(temp);
         }
-
         deleteFront(G->neighbors[i]);
     }
-
-    fseeko(out,-2,SEEK_END);
-    ftruncate(fileno(out),ftello(out));
 }
