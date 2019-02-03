@@ -137,7 +137,10 @@ void printGraph(FILE* out, Graph G)
         {
             if(head->data < temp->data)
             {
-                fprintf(out, "%d %d, ", head->data, temp->data);
+                if(i+2 > G->numVertices && temp->next == NULL)
+                    fprintf(out, "%d %d ", head->data, temp->data);
+                else
+                    fprintf(out, "%d %d, ", head->data, temp->data);
             }
             temp = getNextNode(temp);
         }
