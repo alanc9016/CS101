@@ -9,7 +9,7 @@
 #include "List.h"
 #include "Graph.h"
 
-#define MAX_LEN 160
+#define MAX_LEN 5000
 
 int main(int argc, char* argv[])
 {
@@ -39,44 +39,36 @@ int main(int argc, char* argv[])
         exit(1);
     }
 
-    for(int i = 0; i < 160; i++)
-    {
-        tokenlist[i] = 'a';
-    }
-
     fgets(line, MAX_LEN, in);
     token = strtok(line, " \n");
     tokenlist[0] = '\0';
 
-    while (token != NULL)
+    Graph G = newGraph(atoi(token));
+
+    token = strtok(NULL, " \n");
+
+    int a;
+    int b;
+    int i = 1;
+
+    while( token != NULL )
     {
         strcat(tokenlist, "");
         strcat(tokenlist, token);
-        strcat(tokenlist, " ");
-        token = strtok(NULL, " \n");
-    }
-
-    Graph G = newGraph(tokenlist[0] - '0');
-    int counter = 0;
-    int j = 0;
-
-    for(int i = 1; i < 160; i++)
-        if(isdigit(tokenlist[i]))
-            counter++;
-
-    int array[counter];
-
-    for(int i = 1; i < 160; i++)
-    {
-        if(isdigit(tokenlist[i]))
+        strcat(tokenlist, "");
+        if(i == 1)
+            a = atoi(token);
+        else if(i == 2)
         {
-            array[j] = tokenlist[i];
-            j++;
+            b = atoi(token);
+            addEdge(G, a ,b);
+            i = 0;
         }
+        token = strtok(NULL, " \n");
+        i++;
     }
 
-    for(int i = 0; i < counter; i+=2)
-        addEdge(G, array[i] - '0', array[i+1] - '0');
+
 
     while( fgets(line, MAX_LEN, in) != NULL)
     {
