@@ -9,7 +9,9 @@
 #include "List.h"
 #include "Graph.h"
 
-#define MAX_LEN 5000
+#define MAX_LEN 160
+
+void pathExists(FILE* out, Graph G, int u, int v);
 
 int main(int argc, char* argv[])
 {
@@ -94,6 +96,11 @@ int main(int argc, char* argv[])
             fprintf(out,"GetSize\n");
             fprintf(out,"%d\n", getSize(G));
         }
+        else if(strcmp(tokenlist, "GetOrder ") == 0)
+        {
+            fprintf(out, "GetOrder\n");
+            fprintf(out, "%d\n", getOrder(G));
+        }
         else if(strstr(tokenlist, "GetNeighborCount ") != NULL)
         {
             char *ret = strstr(tokenlist, "GetNeighborCount ");
@@ -117,16 +124,16 @@ int main(int argc, char* argv[])
                     fprintf(out,"PathExists %d\n",atoi(ret+11));
                 fprintf(out,"ERROR\n");
             }
+            else if(atoi(ret+11) > G->numVertices || atoi(ret+13) > G->numVertices ||
+            atoi(ret+11) < 0 || atoi(ret+13) < 0)
+            {
+                fprintf(out,"PathExists %d %d\n",atoi(ret+11), atoi(ret+13));
+                fprintf(out,"ERROR\n");
+            }
             else
             {
-                int theFoundValue;
-                unvisitAll(G);
                 fprintf(out,"PathExists %d %d\n",atoi(ret+11), atoi(ret+13));
-                theFoundValue = pathExistsRecursive(G,atoi(ret+11), atoi(ret+13));
-                if(theFoundValue == FOUND)
-                    fprintf(out,"YES\n");
-                else
-                    fprintf(out,"NO\n");
+                pathExists(out, G, atoi(ret+11), atoi(ret+13));
             }
         }
     }
@@ -136,4 +143,15 @@ int main(int argc, char* argv[])
     fclose(out);
 
     return 0;
+}
+
+void pathExists(FILE* out, Graph G, int u, int v)
+{
+    int theFoundValue;
+    unvisitAll(G);
+    theFoundValue = pathExistsRecursive(G,u,v);
+    if(theFoundValue == FOUND)
+        fprintf(out,"YES\n");
+    else
+        fprintf(out,"NO\n");
 }

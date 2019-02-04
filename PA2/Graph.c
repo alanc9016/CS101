@@ -126,6 +126,7 @@ int pathExistsRecursive(Graph G, int w, int v)
 void printGraph(FILE* out, Graph G)
 {
     fprintf(out, "%d, ", G->numVertices);
+    int j = 1;
 
     for(int i = 0; i <= G->numVertices; i++)
     {
@@ -137,10 +138,11 @@ void printGraph(FILE* out, Graph G)
         {
             if(head->data < temp->data)
             {
-                if(i+2 > G->numVertices && temp->next == NULL)
-                    fprintf(out, "%d %d ", head->data, temp->data);
-                else
+                if(j < G->numEdges)
                     fprintf(out, "%d %d, ", head->data, temp->data);
+                else
+                    fprintf(out, "%d %d ", head->data, temp->data);
+                j++;
             }
             temp = getNextNode(temp);
         }
