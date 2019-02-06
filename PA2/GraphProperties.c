@@ -9,7 +9,7 @@
 #include "List.h"
 #include "Graph.h"
 
-#define MAX_LEN 160
+#define MAX_LEN 5000
 
 void pathExists(FILE* out, Graph G, int u, int v);
 
@@ -44,6 +44,14 @@ int main(int argc, char* argv[])
     fgets(line, MAX_LEN, in);
     token = strtok(line, " \n");
     tokenlist[0] = '\0';
+
+    if(atoi(token) == 0)
+    {
+        fprintf(out, "ERROR");
+        fclose(in);
+        fclose(out);
+        exit(1);
+    }
 
     Graph G = newGraph(atoi(token));
 
@@ -135,6 +143,11 @@ int main(int argc, char* argv[])
                 fprintf(out,"PathExists %d %d\n",atoi(ret+11), atoi(ret+13));
                 pathExists(out, G, atoi(ret+11), atoi(ret+13));
             }
+        }
+        else
+        {
+            fprintf(out, "%s\n", tokenlist);
+            fprintf(out, "ERROR\n");
         }
     }
 

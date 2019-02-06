@@ -73,6 +73,7 @@ void printGraph(FILE* out, Graph G);
 // call to PrintGraph(). But it should not print out an edge twice. Achieve this by only printing
 // the edge for {j,k} when j < k.
 
+void DFS(Graph G, int v);
 
 
 #endif //ALCARO_GRAPH_H

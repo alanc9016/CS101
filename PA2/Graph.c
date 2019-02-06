@@ -7,8 +7,7 @@
 #include <malloc.h>
 #include "Graph.h"
 #include "List.h"
-#include <unistd.h>
-#include <sys/types.h>
+
 
 Graph newGraph(int numVertices)
 {
@@ -60,6 +59,11 @@ List getNeighbors(Graph G, int v)
 
 int addEdge(Graph G, int u, int v)
 {
+    if(u > G->numVertices|| v > G->numVertices)
+        return -1;
+    else if(u <= 0 || v <= 0)
+        return -1;
+
     NodeObj* head = G->neighbors[u]->head;
 
     while(head != NULL)
@@ -148,4 +152,16 @@ void printGraph(FILE* out, Graph G)
         }
         deleteFront(G->neighbors[i]);
     }
+}
+
+void DFS(Graph G, int w)
+{
+    setMark(G,w,IN_PROGRESS);
+    printf("%d ", w);
+
+    for(NodeObj* v = getNeighbors(G,w)->head; v != NULL; v = getNextNode(v))
+        if(getMark(G,v->data) == UNVISITED)
+            DFS(G,v->data);
+
+    setMark(G,w,ALL_DONE);
 }
