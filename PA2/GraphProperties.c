@@ -47,7 +47,16 @@ int main(int argc, char* argv[])
 
     if(atoi(token) == 0)
     {
-        fprintf(out, "ERROR");
+        while( token != NULL )
+        {
+            strcat(tokenlist, "");
+            strcat(tokenlist, token);
+            strcat(tokenlist, " ");
+            token = strtok(NULL, " \n");
+        }
+
+        fprintf(out, "%s", tokenlist);
+        fprintf(out, "\nERROR");
         fclose(in);
         fclose(out);
         exit(1);
