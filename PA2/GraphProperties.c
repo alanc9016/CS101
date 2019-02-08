@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
     token = strtok(line, " \n");
     tokenlist[0] = '\0';
 
-    if(atoi(token) == 0)
+    if(atoi(token) <= 0)
     {
         while( token != NULL )
         {
