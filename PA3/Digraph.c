@@ -57,6 +57,9 @@ int getOutDegree(Digraph G, int u)
 
 int getInDegree(Digraph G, int u)
 {
+    if(u > G->numVertices || u <= 0)
+        return -1;
+
     int inDeg = 0;
 
     for (int i = 1; i <= G->numVertices; i++)
@@ -148,36 +151,7 @@ void setMark(Digraph G, int u, int theMark)
 void resetDistance(Digraph G)
 {
     for(int i = 1; i <= G->numVertices; i++)
-        G->distance[i] = 0;
-}
-
-int pathExistsRecursive(Digraph G, int w, int v)
-{
-    int theMark;
-    int theFoundValue = NOTFOUND;
-
-    if(w == v)
-        return FOUND;
-    setMark(G,w,IN_PROGRESS);
-
-
-    List A = getNeighbors(G,w);
-    NodeObj* head = A->head;
-
-    while(head != NULL)
-    {
-        theMark = getMark(G,head->data);
-        if(theMark == UNVISITED)
-            theFoundValue = pathExistsRecursive(G,head->data,v);
-        if(theFoundValue == FOUND)
-            return FOUND;
-        head = getNextNode(head);
-    }
-
-
-    setMark(G,w,ALL_DONE);
-    return NOTFOUND;
-
+        G->distance[i] = INT_MAX;
 }
 
 void printDigraph(FILE* out, Digraph G)
@@ -207,50 +181,37 @@ void printDigraph(FILE* out, Digraph G)
 void distance(FILE* out, Digraph G, int u, int v)
 {
     unvisitAll(G);
+    resetDistance(G);
 
-    if(u == v)
+    setMark(G,u,IN_PROGRESS);
+    G->distance[u] = 0;
+    List Q = newList();
+    append(Q,u);
+
+    while(length(Q) != 0)
     {
-        fprintf(out, "%d ", 0);
-        return;
-    }
-    else if(pathExistsRecursive(G,u,v) == NOTFOUND)
-    {
-        fprintf(out, "INF");
-        return;
-    }
-    else
-    {
-        unvisitAll(G);
-        resetDistance(G);
+        int x = Q->head->data;
+        deleteFront(Q);
 
-        List queue = newList();
-
-        append(queue,u);
-        setMark(G,u,IN_PROGRESS);
-
-        while(length(queue) != 0)
+        for(NodeObj* w = getNeighbors(G, x)->head; w != NULL; w = getNextNode(w))
         {
-            int x = queue->head->data;
-            deleteFront(queue);
-
-            for(NodeObj *y = G->neighbors[x]->head; y != NULL; y = getNextNode(y))
+            if(getMark(G,w->data) == UNVISITED)
             {
-                if(getMark(G,y->data) == UNVISITED)
-                {
-                    G->distance[y->data] = G->distance[x] + 1;
-                    append(queue,y->data);
-                    setMark(G,y->data,IN_PROGRESS);
-                }
-
-                if(y->data == v)
-                {
-                    fprintf(out, "%d", G->distance[v]);
-                    freeList(&queue);
-                    return;
-                }
+                setMark(G,w->data, IN_PROGRESS);
+                G->distance[w->data] = G->distance[x] + 1;
+                append(Q, w->data);
             }
         }
+
+        setMark(G,x,ALL_DONE);
     }
+
+    freeList(&Q);
+
+    if(G->distance[v] == INT_MAX)
+        fprintf(out,"INF");
+    else
+        fprintf(out,"%d",G->distance[v]);
 }
 
 int DFS_Test_Acyclic(Digraph G, int u)

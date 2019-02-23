@@ -34,7 +34,19 @@
 
 ## Instructions
 - make makes DigraphProperties
-- ./GraphProperties input.txt output.txt
-## Author
+- ./DigraphProperties input.txt output.txt
 
+## DigraphObj Extra Fields
+- distance: Keeps track of the distances from u to v. If another node (x) is in the way from u to v, I save this distance in index x. 
+
+## Distance
+- BFS starting at u. If node is unvisited save distances in distance array. Queue operations take O(V) since we go though all the graph. Then going through each list is O(E). Hence O(V + E).
+
+## Acyclic
+- Calls DFS_Test_Acyclic for every vertex O(V) and it iterates through the list O(E), hence O(V+E). DFS_Test_Acyclic performs DFS on graph if it encounters a node IN_PROGRESS returns 1 (indicating a cycle)
+
+## topoSort
+- Calls DFS_Test_Acyclic (to test for cycles) for every vertex O(V) and it iterates through the list O(E), hence O(V+E). In DFS_Test_Acyclic I eventually put all vertices that don't depend on other vertices in a stack then print the stack.
+
+## Author
 - **Alan Caro** 

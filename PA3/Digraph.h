@@ -82,10 +82,7 @@ void setMark(Digraph G, int u, int theMark);
     // theMark must be UNVISITED, IN_PROGRESS, or ALL_DONE.
 
 void resetDistance(Digraph G);
-    // Sets all vertices distance to 0
-
-int pathExistsRecursive(Digraph G, int w, int v);
-    // Described below; returns FOUND or NOTFOUND which are (different) constants.
+    // Sets all vertices distance to Infinity
 
 /*** Other operations ***/
 void printDigraph(FILE* out, Digraph G);

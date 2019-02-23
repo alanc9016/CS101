@@ -315,15 +315,6 @@ void deleteNode(List L, int v)
         {
             if(t->data == v)
             {
-//                NodeObj* next = t->next;
-//                NodeObj* prev = t->prev;
-//
-//                prev->next = next;
-//                next->prev = prev;
-//
-//                t->next = NULL;
-//                t->prev = NULL;
-
                 detachNode(L, t);
 
                 free(t);
