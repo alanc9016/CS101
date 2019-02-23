@@ -4,194 +4,243 @@
  * Assignment Name:  Assignment 3
  **********************************************/
 
-#include <string.h>
-#include <ctype.h>
-#include "List.h"
 #include "Digraph.h"
-#define MAX_LEN 5000
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <errno.h>
 
-int main(int argc, char* argv[])
+char *parseVertex(char *buffer, int *numOfVertices);
+
+void parseEdges(char *buf, Digraph g);
+
+void getIntsBetween(char *buf, char *tmp, int *u, int *v);
+
+char *getNumber(const char *buffer, int *numOfVertices, char **found);
+
+FILE *openFileOrExitOnFailure(char *filename, char *mode);
+
+FILE *in;
+FILE *out;
+char *buffer;
+
+int main(int argc, char **argv)
 {
-    char line[MAX_LEN];
-    char tokenlist[MAX_LEN];
-    char* token;
-    FILE *in, *out;
-
-
-    if(argc != 3)
-    {
-        printf("Usage: %s <input file> <output file>\n", argv[0]);
-        exit(1);
-    }
-
-    in = fopen(argv[1], "r");
-    out = fopen(argv[2], "w");
-
-    if(in == NULL)
-    {
-        printf("Unable to open file %s for reading\n", argv[1]);
-        exit(1);
-    }
-
-    if(out == NULL)
-    {
-        printf("Unable to open file %s for writing\n", argv[2]);
-        exit(1);
-    }
-
-
-    fgets(line, MAX_LEN, in);
-    token = strtok(line, " \n");
-    tokenlist[0] = '\0';
-
-
-    if(atoi(token) <= 0)
-    {
-        while( token != NULL )
-        {
-            strcat(tokenlist, "");
-            strcat(tokenlist, token);
-            strcat(tokenlist, " ");
-            token = strtok(NULL, " \n");
-        }
-
-        fprintf(out, "%s", tokenlist);
-        fprintf(out, "\nERROR");
-        fclose(in);
-        fclose(out);
-        exit(1);
-    }
-
-    Digraph G = newDigraph(atoi(token));
+    Digraph g;
     B = newList();
 
-    token = strtok(NULL, " \n");
+    if (argc != 3)
+        exit(EXIT_FAILURE);
 
-    int a;
-    int b;
-    int i = 1;
+    char *infileName = argv[1];
+    char *outfileName = argv[2];
+    in = openFileOrExitOnFailure(infileName, "r");
+    out = openFileOrExitOnFailure(outfileName, "w");
 
-    while( token != NULL )
+    int n = 10000; // large graph. You may even allocate 1000000 bytes to read a line. But for PA3, line length will be restricted to 1000 bytes.
+    buffer = calloc(n, 1);
+    fgets(buffer,n,in); // Alternatively, instead of fgets() you can use getline() on Linux machines only as: char *buffer; int n; getline(&buffer, &n, in);
+
+    // Setup graph data.
+    int vcount=0;
+    char* restOfTheBuffer = parseVertex(buffer, &vcount);
+
+    if(vcount <= 0)
     {
-        strcat(tokenlist, "");
-        strcat(tokenlist, token);
-        strcat(tokenlist, "");
-
-        if(i == 1)
-            a = atoi(token);
-        else if(i == 2)
-        {
-            b = atoi(token);
-            if(a > G->numVertices|| b > G->numVertices)
-            {
-                fprintf(out, "ERROR");
-                fclose(in);
-                fclose(out);
-                exit(1);
-            }
-            else if(a <= 0 || b <= 0)
-            {
-                fprintf(out, "ERROR");
-                fclose(in);
-                fclose(out);
-                exit(1);
-            }
-            addEdge(G, a ,b);
-            i = 0;
-        }
-        token = strtok(NULL, " \n");
-        i++;
+        fprintf(out,"%s", buffer);
+        fprintf(out, "ERROR");
+        fclose(in);
+        fclose(out);
+        freeList(&B);
+        free(buffer);
+        exit(1);
     }
 
+    g=newDigraph(vcount);
+    parseEdges(restOfTheBuffer+1,g);
 
-    while( fgets(line, MAX_LEN, in) != NULL)
+
+    // Read next set of lines and perform actions
+    while(fgets(buffer,n,in) != NULL)
     {
-        token = strtok(line, " \n");
-        tokenlist[0] = '\0';
-
-        while( token != NULL )
+        if(strstr(buffer, "PrintDigraph") != NULL)
         {
-            strcat(tokenlist, "");
-            strcat(tokenlist, token);
-            strcat(tokenlist, " ");
-            token = strtok(NULL, " \n");
-        }
-
-        if(strcmp(tokenlist,"PrintDigraph ") == 0)
-        {
-            fprintf(out,"PrintGraph\n");
-            printDigraph(out,G);
+            fprintf(out,"PrintDigraph\n");
+            printDigraph(out,g);
             fprintf(out,"\n");
         }
-        else if(strcmp(tokenlist,"GetSize ") == 0)
+        else if(strstr(buffer, "GetSize") != NULL)
         {
             fprintf(out,"GetSize\n");
-            fprintf(out,"%d\n", getSize(G));
+            fprintf(out,"%d\n", getSize(g));
         }
-        else if(strcmp(tokenlist, "GetOrder ") == 0)
+        else if(strstr(buffer, "GetOrder") != NULL)
         {
             fprintf(out, "GetOrder\n");
-            fprintf(out, "%d\n", getOrder(G));
+            fprintf(out, "%d\n", getOrder(g));
         }
-        else if(strstr(tokenlist, "GetOutDegree ") != NULL)
+        else if(strstr(buffer, "GetOutDegree ") != NULL)
         {
-            char *ret = strstr(tokenlist, "GetOutDegree ");
+            char *ret = strstr(buffer, "GetOutDegree ");
 
             fprintf(out,"GetOutDegree %d\n", atoi(ret+13));
 
-            if(getOutDegree(G,atoi(ret+13)) == -1)
+            if(getOutDegree(g,atoi(ret+13)) == -1)
                 fprintf(out,"ERROR\n");
             else
-                fprintf(out,"%d\n", getOutDegree(G,atoi(ret+13)));
+                fprintf(out,"%d\n", getOutDegree(g,atoi(ret+13)));
         }
-        else if(strstr(tokenlist, "Distance ") != NULL)
+        else if(strstr(buffer, "Distance ") != NULL)
         {
-            char *ret = strstr(tokenlist, "Distance ");
+            char *ret = strstr(buffer, "Distance ");
 
-            fprintf(out,"Distance %d %d\n",atoi(ret+8), atoi(ret+10));
-            distance(out, G, atoi(ret+8), atoi(ret+10));
-            fprintf(out, "\n");
+            if(atoi(ret+12) != 0)
+            {
+                fprintf(out, "%s", buffer);
+                fprintf(out, "ERROR\n");
+            }
+            else
+            {
+                fprintf(out,"Distance %d %d\n",atoi(ret+8), atoi(ret+10));
+                distance(out, g, atoi(ret+8), atoi(ret+10));
+                fprintf(out, "\n");
+            }
 
         }
-        else if(strstr(tokenlist, "Acyclic") != NULL)
+        else if(strstr(buffer, "Acyclic") != NULL)
         {
             fprintf(out,"Acyclic\n");
-            acyclic(out, G);
+            acyclic(out, g);
             fprintf(out, "\n");
         }
-        else if(strstr(tokenlist, "TopoSort") != NULL)
+        else if(strstr(buffer, "TopoSort") != NULL)
         {
             fprintf(out, "TopoSort\n");
-            topoSort(out, G);
+            topoSort(out, g);
         }
-        else if(strstr(tokenlist, "DeleteEdge") != NULL)
+        else if(strstr(buffer, "DeleteEdge") != NULL)
         {
-            char *ret = strstr(tokenlist, "DeleteEdge ");
+            char *ret = strstr(buffer, "DeleteEdge ");
 
-            fprintf(out,"DeleteEdge %d %d\n",atoi(ret+11), atoi(ret+13));
-            fprintf(out,"%d", deleteEdge(G, atoi(ret+11), atoi(ret+13)));
-            fprintf(out, "\n");
+            if(atoi(ret+15) != 0)
+            {
+                fprintf(out, "%s", buffer);
+                fprintf(out, "ERROR\n");
+            }
+            else
+            {
+                fprintf(out,"DeleteEdge %d %d\n",atoi(ret+11), atoi(ret+13));
+                fprintf(out,"%d", deleteEdge(g, atoi(ret+11), atoi(ret+13)));
+                fprintf(out, "\n");
+            }
         }
-        else if(strstr(tokenlist, "AddEdge") != NULL)
+        else if(strstr(buffer, "AddEdge") != NULL)
         {
-            char *ret = strstr(tokenlist, "AddEdge ");
+            char *ret = strstr(buffer, "AddEdge ");
 
-            fprintf(out, "AddEdge %d %d\n", atoi(ret+8), atoi(ret+10));
-            fprintf(out, "%d", addEdge(G, atoi(ret+8), atoi(ret+10)));
-            fprintf(out, "\n");
+            if(atoi(ret+12) != 0)
+            {
+                fprintf(out, "%s", buffer);
+                fprintf(out, "ERROR\n");
+            }
+            else
+            {
+                fprintf(out, "AddEdge %d %d\n", atoi(ret+8), atoi(ret+10));
+                fprintf(out, "%d", addEdge(g, atoi(ret+8), atoi(ret+10)));
+                fprintf(out, "\n");
+            }
         }
         else
         {
-            fprintf(out, "%s\n", tokenlist);
+            fprintf(out, "%s", buffer);
             fprintf(out, "ERROR\n");
         }
     }
 
-
-    freeList(&B);
-    freeDigraph(&G);
+    // Free all allocated data.
     fclose(in);
     fclose(out);
-
+    freeDigraph(&g);
+    freeList(&B);
+    free(buffer);
     return 0;
+}
+
+FILE *openFileOrExitOnFailure(char *filename, char *mode) {
+    FILE *in = fopen(filename, mode);
+    if (in == NULL) {
+        fprintf(stderr, "unable to open file %s\n", filename);
+        exit(EXIT_FAILURE);
+    }
+    return in;
+}
+
+void parseEdges(char *buf, Digraph g)
+{
+    char* tmp=buf;
+    char* start=buf;
+    int u,v;
+
+    while (tmp!=NULL) {
+        tmp = strchr(start, ',');
+        getIntsBetween(start,tmp,&u,&v);
+
+        if(u > g->numVertices || v > g->numVertices)
+        {
+            fprintf(out, "%d,%s", g->numVertices, buf);
+            fprintf(out, "ERROR");
+            freeDigraph(&g);
+            freeList(&B);
+            fclose(in);
+            fclose(out);
+            free(buffer);
+            exit(1);
+        }
+        else if (u <= 0 || v <= 0)
+        {
+            fprintf(out, "%d,%s", g->numVertices, buf);
+            fprintf(out, "ERROR");
+            freeDigraph(&g);
+            freeList(&B);
+            fclose(in);
+            fclose(out);
+            free(buffer);
+            exit(1);
+        }
+
+        addEdge(g,u,v);
+        start=tmp+1;
+    }
+
+}
+
+void getIntsBetween(char *buf, char *tmp, int *u, int *v)
+{
+    while (*buf == ' ')
+        buf++;
+
+    char* found = strchr(buf,' ');
+    getNumber(buf,u,&found);
+    getNumber(found,v,&tmp);
+}
+
+char *parseVertex(char *buffer, int *numOfVertices)
+{
+    char* found = strchr(buffer,',');
+    return getNumber(buffer, numOfVertices, &found);
+}
+
+char *getNumber(const char *buffer, int *numOfVertices, char **found)
+{
+    errno =0;
+    *numOfVertices = (int) strtol(buffer, found, 10);
+
+    if (errno == ERANGE)
+    {
+        *numOfVertices=-1;
+        (*found) =NULL;
+        fprintf(stderr,"Error occurred while parsing vertex.");
+        exit(EXIT_FAILURE);
+    }
+    return (*found);
 }

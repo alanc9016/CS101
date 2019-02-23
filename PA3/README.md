@@ -1,14 +1,14 @@
 # Assignment 3
 
 ##### Table of Contents  
-- [GraphProperties.c](#DigraphProperties.c)
+- [DigraphProperties.c](#DigraphProperties.c)
 - [List.c](#List.c)
 - [List.h](#List.h)
 - [Digraph.c](#Digraph.c)
 - [Digraph.h](#Digraph.h)
 - [Makefile](#Makefile)
  
-<a name="GraphProperties.c"></a>
+<a name="DigraphProperties.c"></a>
 ### DigraphProperties.c
 - Uses operations from Digraph.c and List.c to manipulate a Digraph and print it to a file.
 
@@ -20,11 +20,11 @@
 ### List.h
 - Header file that contains List function declarations.
 
-<a name="Graph.c"></a>
+<a name="Digraph.c"></a>
 ### Digraph.c
 -  Implementation file that contains the Digraph ADT module.
 
-<a name="List.h"></a>
+<a name="Digraph.h"></a>
 ### Digraph.h
 -   Header file that contains Digraph function declarations.
 
@@ -37,7 +37,7 @@
 - ./DigraphProperties input.txt output.txt
 
 ## DigraphObj Extra Fields
-- distance: Keeps track of the distances from u to v. If another node (x) is in the way from u to v, I save this distance in index x. 
+- distance: Keeps track of the distances from u to all other vertices reachable from u. If not reachable distance is INFINITY.
 
 ## Distance
 - BFS starting at u. If node is unvisited save distances in distance array. Queue operations take O(V) since we go though all the graph. Then going through each list is O(E). Hence O(V + E).
