@@ -150,8 +150,8 @@ void setMark(Digraph G, int u, int theMark)
 
 void resetDistance(Digraph G)
 {
-    for(int i = 1; i <= G->numVertices; i++)
-        G->distance[i] = INT_MAX;
+    for(int i = 0; i <= G->numVertices; i++)
+        G->distance[i] = 0;
 }
 
 void printDigraph(FILE* out, Digraph G)
@@ -180,6 +180,12 @@ void printDigraph(FILE* out, Digraph G)
 
 void distance(FILE* out, Digraph G, int u, int v)
 {
+    if(u == v)
+    {
+        fprintf(out,"0");
+        return;
+    }
+
     unvisitAll(G);
     resetDistance(G);
 
@@ -208,7 +214,7 @@ void distance(FILE* out, Digraph G, int u, int v)
 
     freeList(&Q);
 
-    if(G->distance[v] == INT_MAX)
+    if(G->distance[v] == 0)
         fprintf(out,"INF");
     else
         fprintf(out,"%d",G->distance[v]);

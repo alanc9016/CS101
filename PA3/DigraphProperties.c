@@ -94,7 +94,7 @@ int main(int argc, char **argv)
         {
             char *ret = strstr(buffer, "Distance ");
 
-            if(atoi(ret+12) != 0)
+            if(atoi(ret+10) == 0)
             {
                 fprintf(out, "%s", buffer);
                 fprintf(out, "ERROR\n");
@@ -109,14 +109,26 @@ int main(int argc, char **argv)
         }
         else if(strstr(buffer, "Acyclic") != NULL)
         {
-            fprintf(out,"Acyclic\n");
-            acyclic(out, g);
-            fprintf(out, "\n");
+            char *ret = strstr(buffer, "Acyclic");
+
+            if(strncmp((ret+8),"",1))
+            {
+                fprintf(out, "%s", buffer);
+                fprintf(out, "ERROR\n");
+            }
+            else
+            {
+                fprintf(out,"Acyclic\n");
+                acyclic(out, g);
+                fprintf(out, "\n");
+            }
         }
         else if(strstr(buffer, "TopoSort") != NULL)
         {
             fprintf(out, "TopoSort\n");
             topoSort(out, g);
+            freeList(&B);
+            B = newList();
         }
         else if(strstr(buffer, "DeleteEdge") != NULL)
         {
