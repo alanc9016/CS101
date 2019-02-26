@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <ctype.h>
 
 char *parseVertex(char *buffer, int *numOfVertices);
 
@@ -85,24 +86,33 @@ int main(int argc, char **argv)
 
             fprintf(out,"GetOutDegree %d\n", atoi(ret+13));
 
-            if(getOutDegree(g,atoi(ret+13)) == -1)
-                fprintf(out,"ERROR\n");
-            else
-                fprintf(out,"%d\n", getOutDegree(g,atoi(ret+13)));
+            fprintf(out,"%d\n", getOutDegree(g,atoi(ret+13)));
         }
         else if(strstr(buffer, "Distance") != NULL)
         {
-            char *ret = strstr(buffer, "Distance");
+            fprintf(out,"%s", buffer);
 
-            if(atoi(ret+11) == 0)
+            char *ret  = strtok(buffer, " \r\t\n");
+            int a = 0;
+            int b = 0;
+            int count = 0;
+
+            while(ret != NULL)
             {
-                fprintf(out, "%s", buffer);
-                fprintf(out, "ERROR\n");
+                if(isdigit(*ret))
+                    count++;
+                if(count == 1)
+                    a = atoi(ret);
+                if (count == 2)
+                    b = atoi(ret);
+                ret = strtok(NULL, " ");
             }
+
+            if(count != 2)
+                fprintf(out,"ERROR\n");
             else
             {
-                fprintf(out,"Distance %d %d\n",atoi(ret+8), atoi(ret+11));
-                distance(out, g, atoi(ret+8), atoi(ret+11));
+                distance(out,g, a, b);
                 fprintf(out, "\n");
             }
 
@@ -132,33 +142,57 @@ int main(int argc, char **argv)
         }
         else if(strstr(buffer, "DeleteEdge") != NULL)
         {
-            char *ret = strstr(buffer, "DeleteEdge ");
+            fprintf(out,"%s", buffer);
 
-            if(atoi(ret+16) != 0)
+            char *ret  = strtok(buffer, " \r\t\n");
+            int a = 0;
+            int b = 0;
+            int count = 0;
+
+            while(ret != NULL)
             {
-                fprintf(out, "%s", buffer);
-                fprintf(out, "ERROR\n");
+                if(isdigit(*ret))
+                    count++;
+                if(count == 1)
+                    a = atoi(ret);
+                if (count == 2)
+                    b = atoi(ret);
+                ret = strtok(NULL, " ");
             }
+
+            if(count != 2)
+                fprintf(out,"ERROR\n");
             else
             {
-                fprintf(out,"DeleteEdge %d %d\n",atoi(ret+11), atoi(ret+13));
-                fprintf(out,"%d", deleteEdge(g, atoi(ret+11), atoi(ret+13)));
+                fprintf(out,"%d", deleteEdge(g, a, b));
                 fprintf(out, "\n");
             }
         }
         else if(strstr(buffer, "AddEdge") != NULL)
         {
-            char *ret = strstr(buffer, "AddEdge ");
+            fprintf(out,"%s", buffer);
 
-            if(atoi(ret+12) != 0)
+            char *ret  = strtok(buffer, " \r\t\n");
+            int a = 0;
+            int b = 0;
+            int count = 0;
+
+            while(ret != NULL)
             {
-                fprintf(out, "%s", buffer);
-                fprintf(out, "ERROR\n");
+                if(isdigit(*ret))
+                    count++;
+                if(count == 1)
+                    a = atoi(ret);
+                if (count == 2)
+                    b = atoi(ret);
+                ret = strtok(NULL, " ");
             }
+
+            if(count != 2)
+                fprintf(out,"ERROR\n");
             else
             {
-                fprintf(out, "AddEdge %d %d\n", atoi(ret+8), atoi(ret+10));
-                fprintf(out, "%d", addEdge(g, atoi(ret+8), atoi(ret+10)));
+                fprintf(out,"%d", addEdge(g, a, b));
                 fprintf(out, "\n");
             }
         }
