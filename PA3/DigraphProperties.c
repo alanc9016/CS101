@@ -90,19 +90,19 @@ int main(int argc, char **argv)
             else
                 fprintf(out,"%d\n", getOutDegree(g,atoi(ret+13)));
         }
-        else if(strstr(buffer, "Distance ") != NULL)
+        else if(strstr(buffer, "Distance") != NULL)
         {
-            char *ret = strstr(buffer, "Distance ");
+            char *ret = strstr(buffer, "Distance");
 
-            if(atoi(ret+10) == 0)
+            if(atoi(ret+11) == 0)
             {
                 fprintf(out, "%s", buffer);
                 fprintf(out, "ERROR\n");
             }
             else
             {
-                fprintf(out,"Distance %d %d\n",atoi(ret+8), atoi(ret+10));
-                distance(out, g, atoi(ret+8), atoi(ret+10));
+                fprintf(out,"Distance %d %d\n",atoi(ret+8), atoi(ret+11));
+                distance(out, g, atoi(ret+8), atoi(ret+11));
                 fprintf(out, "\n");
             }
 
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
         {
             char *ret = strstr(buffer, "DeleteEdge ");
 
-            if(atoi(ret+15) != 0)
+            if(atoi(ret+16) != 0)
             {
                 fprintf(out, "%s", buffer);
                 fprintf(out, "ERROR\n");
