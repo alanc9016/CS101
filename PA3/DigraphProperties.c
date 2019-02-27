@@ -64,51 +64,62 @@ int main(int argc, char **argv)
     // Read next set of lines and perform actions
     while(fgets(buffer,n,in) != NULL)
     {
+        fprintf(out,"%s", buffer);
+
+        char *ret  = strtok(buffer, " \r\t\n");
+        int a = 0;
+        int b = 0;
+        int numCount = 0;
+        int argCount = 0;
+
+        while(ret != NULL)
+        {
+            argCount++;
+
+            if(isdigit(*ret))
+                numCount++;
+            if(numCount == 1)
+                a = atoi(ret);
+            if (numCount == 2)
+                b = atoi(ret);
+            ret = strtok(NULL, " ");
+        }
+
         if(strstr(buffer, "PrintDigraph") != NULL)
         {
-            fprintf(out,"PrintDigraph\n");
-            printDigraph(out,g);
-            fprintf(out,"\n");
+            if(argCount != 1)
+                fprintf(out, "ERROR\n");
+            else
+            {
+                printDigraph(out,g);
+                fprintf(out, "\n");
+            }
         }
         else if(strstr(buffer, "GetSize") != NULL)
         {
-            fprintf(out,"GetSize\n");
-            fprintf(out,"%d\n", getSize(g));
+            if(argCount != 1)
+                fprintf(out, "ERROR\n");
+            else
+                fprintf(out,"%d\n", getSize(g));
         }
         else if(strstr(buffer, "GetOrder") != NULL)
         {
-            fprintf(out, "GetOrder\n");
-            fprintf(out, "%d\n", getOrder(g));
+            if(argCount != 1)
+                fprintf(out, "ERROR\n");
+            else
+                fprintf(out, "%d\n", getOrder(g));
         }
-        else if(strstr(buffer, "GetOutDegree ") != NULL)
+        else if(strstr(buffer, "GetOutDegree") != NULL)
         {
-            char *ret = strstr(buffer, "GetOutDegree ");
+            if(numCount != 1 || argCount != 2)
+                fprintf(out, "ERROR\n");
+            else
+                fprintf(out,"%d\n", getOutDegree(g,a));
 
-            fprintf(out,"GetOutDegree %d\n", atoi(ret+13));
-
-            fprintf(out,"%d\n", getOutDegree(g,atoi(ret+13)));
         }
         else if(strstr(buffer, "Distance") != NULL)
         {
-            fprintf(out,"%s", buffer);
-
-            char *ret  = strtok(buffer, " \r\t\n");
-            int a = 0;
-            int b = 0;
-            int count = 0;
-
-            while(ret != NULL)
-            {
-                if(isdigit(*ret))
-                    count++;
-                if(count == 1)
-                    a = atoi(ret);
-                if (count == 2)
-                    b = atoi(ret);
-                ret = strtok(NULL, " ");
-            }
-
-            if(count != 2)
+            if(numCount != 2 || argCount != 3)
                 fprintf(out,"ERROR\n");
             else
             {
@@ -119,48 +130,29 @@ int main(int argc, char **argv)
         }
         else if(strstr(buffer, "Acyclic") != NULL)
         {
-            char *ret = strstr(buffer, "Acyclic");
-
-            if(strncmp((ret+8),"",1))
-            {
-                fprintf(out, "%s", buffer);
+            if(argCount != 1)
                 fprintf(out, "ERROR\n");
-            }
             else
             {
-                fprintf(out,"Acyclic\n");
                 acyclic(out, g);
                 fprintf(out, "\n");
             }
         }
         else if(strstr(buffer, "TopoSort") != NULL)
         {
-            fprintf(out, "TopoSort\n");
-            topoSort(out, g);
-            freeList(&B);
-            B = newList();
+            if(argCount != 1)
+                fprintf(out, "ERROR\n");
+            else
+            {
+                topoSort(out, g);
+                freeList(&B);
+                B = newList();
+            }
+
         }
         else if(strstr(buffer, "DeleteEdge") != NULL)
         {
-            fprintf(out,"%s", buffer);
-
-            char *ret  = strtok(buffer, " \r\t\n");
-            int a = 0;
-            int b = 0;
-            int count = 0;
-
-            while(ret != NULL)
-            {
-                if(isdigit(*ret))
-                    count++;
-                if(count == 1)
-                    a = atoi(ret);
-                if (count == 2)
-                    b = atoi(ret);
-                ret = strtok(NULL, " ");
-            }
-
-            if(count != 2)
+            if(numCount != 2 || argCount != 3)
                 fprintf(out,"ERROR\n");
             else
             {
@@ -170,25 +162,7 @@ int main(int argc, char **argv)
         }
         else if(strstr(buffer, "AddEdge") != NULL)
         {
-            fprintf(out,"%s", buffer);
-
-            char *ret  = strtok(buffer, " \r\t\n");
-            int a = 0;
-            int b = 0;
-            int count = 0;
-
-            while(ret != NULL)
-            {
-                if(isdigit(*ret))
-                    count++;
-                if(count == 1)
-                    a = atoi(ret);
-                if (count == 2)
-                    b = atoi(ret);
-                ret = strtok(NULL, " ");
-            }
-
-            if(count != 2)
+            if(numCount != 2 || argCount != 3)
                 fprintf(out,"ERROR\n");
             else
             {
@@ -197,10 +171,7 @@ int main(int argc, char **argv)
             }
         }
         else
-        {
-            fprintf(out, "%s", buffer);
             fprintf(out, "ERROR\n");
-        }
     }
 
     // Free all allocated data.
