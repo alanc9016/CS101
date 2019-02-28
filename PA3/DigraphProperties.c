@@ -114,7 +114,12 @@ int main(int argc, char **argv)
             if(numCount != 1 || argCount != 2)
                 fprintf(out, "ERROR\n");
             else
-                fprintf(out,"%d\n", getOutDegree(g,a));
+            {
+                if(getOutDegree(g, a) == -1)
+                    fprintf(out, "ERROR\n");
+                else
+                    fprintf(out,"%d\n", getOutDegree(g,a));
+            }
 
         }
         else if(strstr(buffer, "Distance") != NULL)
@@ -156,7 +161,12 @@ int main(int argc, char **argv)
                 fprintf(out,"ERROR\n");
             else
             {
-                fprintf(out,"%d", deleteEdge(g, a, b));
+                int returnValue = deleteEdge(g, a, b);
+
+                if(returnValue == -1)
+                    fprintf(out, "ERROR");
+                else
+                    fprintf(out,"%d", returnValue);
                 fprintf(out, "\n");
             }
         }
@@ -166,7 +176,12 @@ int main(int argc, char **argv)
                 fprintf(out,"ERROR\n");
             else
             {
-                fprintf(out,"%d", addEdge(g, a, b));
+                int returnValue = addEdge(g, a, b);
+                
+                if(returnValue == -1)
+                    fprintf(out, "ERROR");
+                else
+                    fprintf(out,"%d", returnValue);
                 fprintf(out, "\n");
             }
         }

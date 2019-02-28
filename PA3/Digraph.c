@@ -185,6 +185,11 @@ void distance(FILE* out, Digraph G, int u, int v)
         fprintf(out,"0");
         return;
     }
+    else if(u <= 0 || u > G->numVertices || v <= 0 || v > G->numVertices)
+    {
+        fprintf(out,"ERROR");
+        return;
+    }
 
     unvisitAll(G);
     resetDistance(G);
