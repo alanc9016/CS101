@@ -84,31 +84,30 @@ List getNeighbors(Digraph G, int u)
 
 int getCountSCC(Digraph G)
 {
-    int count = 0;
-    Digraph gT = reverseEdges(G);
-
-    unvisitAll(gT);
     unvisitAll(G);
 
     for(int i = 1; i<= G->numVertices; i++)
         if(getMark(G,i) == UNVISITED)
             getVisitOrder(G,i);
 
+    Digraph GT = reverseEdges(G);
+    int count = 0;
+
+    unvisitAll(GT);
 
     while(length(path) != 0 )
     {
         int v = path->head->data;
         deleteFront(path);
 
-        if(getMark(gT,v) == UNVISITED)
+        if(getMark(GT,v) == UNVISITED)
         {
-            DFS(gT,v);
+            DFS(GT,v);
             count++;
         }
     }
 
-
-    freeDigraph(&gT);
+    freeDigraph(&GT);
     return count;
 }
 
@@ -117,27 +116,28 @@ int getNumSCCVertices(Digraph G, int u)
     if( u <= 0 || u > G->numVertices)
         return -1;
 
-    Digraph gT = reverseEdges(G);
-
-    unvisitAll(gT);
     unvisitAll(G);
 
     for(int i = 1; i <= G->numVertices; i++)
         if(getMark(G,i) == UNVISITED)
             getVisitOrder(G,i);
 
+    Digraph GT = reverseEdges(G);
+
+    unvisitAll(GT);
+
     while(length(path) != 0 )
     {
         int v = path->head->data;
         deleteFront(path);
 
-        if(getMark(gT,v) == UNVISITED)
+        if(getMark(GT,v) == UNVISITED)
         {
-            DFS(gT,v);
+            DFS(GT,v);
 
             if(search(strongCC, u) == 1)
             {
-                freeDigraph(&gT);
+                freeDigraph(&GT);
                 return length(strongCC);
             }
 
@@ -146,7 +146,7 @@ int getNumSCCVertices(Digraph G, int u)
         }
     }
 
-    freeDigraph(&gT);
+    freeDigraph(&GT);
     return -1;
 }
 
@@ -158,27 +158,27 @@ int inSameSCC(Digraph G, int u, int v)
         return -1;
     else
     {
-        Digraph gT = reverseEdges(G);
-
         unvisitAll(G);
-        unvisitAll(gT);
-
         for (int i = 1; i <= G->numVertices; i++)
             if (getMark(G, i) == UNVISITED)
                 getVisitOrder(G, i);
+
+        Digraph GT = reverseEdges(G);
+
+        unvisitAll(GT);
 
         while (length(path) != 0)
         {
             int w = path->head->data;
             deleteFront(path);
 
-            if (getMark(gT, w) == UNVISITED)
+            if (getMark(GT, w) == UNVISITED)
             {
-                DFS(gT, w);
+                DFS(GT, w);
 
-                if (search(strongCC, u) == 1 && search(strongCC, v) == 1)
+                if(search(strongCC, u) == 1 && search(strongCC, v) == 1)
                 {
-                    freeDigraph(&gT);
+                    freeDigraph(&GT);
                     return 1;
                 }
 
@@ -187,7 +187,7 @@ int inSameSCC(Digraph G, int u, int v)
             }
         }
 
-        freeDigraph(&gT);
+        freeDigraph(&GT);
     }
 
     return 0;
@@ -286,7 +286,7 @@ void getVisitOrder(Digraph G, int u)
 
 Digraph reverseEdges(Digraph G)
 {
-    Digraph gT = newDigraph(G->numVertices);
+    Digraph GT = newDigraph(G->numVertices);
 
     for(int i = 1; i <= G->numVertices; i++)
     {
@@ -294,12 +294,12 @@ Digraph reverseEdges(Digraph G)
 
         while(tail != NULL)
         {
-            addEdge(gT, tail->data, i);
+            addEdge(GT, tail->data, i);
             tail = getPrevNode(tail);
         }
     }
 
-    return gT;
+    return GT;
 }
 
 void printDigraph(FILE* out, Digraph G)
