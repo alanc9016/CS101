@@ -15,8 +15,8 @@
 #define FOUND 4
 #define NOTFOUND -1
 
-List B;
-List C;
+List path;
+List strongCC;
 
 typedef struct DigraphObj
 {
@@ -62,7 +62,7 @@ int getNumSCCVertices(Digraph G, int u);
     // Returns the number of vertices (including u) that are in the same Strongly Connected Component
     // as u in G. Returns -1 if u is not a legal vertex.
 
-int intSameSCC(Digraph G, int u, int v);
+int inSameSCC(Digraph G, int u, int v);
     // Returns 1 if u and v are in the same Strongly Connected Component of G, and returns 0 if u and v
     // are not in the same Strongly Connected Component of the current digraph.
     // A vertex is always in the same Strongly Connected Component as itself.
@@ -97,7 +97,7 @@ void setMark(Digraph G, int u, int theMark);
 
 void DFS(Digraph G, int w);
 
-List getVisitOrder(Digraph G, int v);
+void getVisitOrder(Digraph G, int v);
 
 Digraph reverseEdges(Digraph G);
 

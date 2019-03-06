@@ -85,19 +85,20 @@ List getNeighbors(Digraph G, int u)
 int getCountSCC(Digraph G)
 {
     int count = 0;
+    Digraph gT = reverseEdges(G);
 
+    unvisitAll(gT);
     unvisitAll(G);
+
     for(int i = 1; i<= G->numVertices; i++)
         if(getMark(G,i) == UNVISITED)
             getVisitOrder(G,i);
 
-    Digraph gT = reverseEdges(G);
-    unvisitAll(gT);
 
-    while(length(B) != 0 )
+    while(length(path) != 0 )
     {
-        int v = B->head->data;
-        deleteFront(B);
+        int v = path->head->data;
+        deleteFront(path);
 
         if(getMark(gT,v) == UNVISITED)
         {
@@ -113,31 +114,35 @@ int getCountSCC(Digraph G)
 
 int getNumSCCVertices(Digraph G, int u)
 {
+    if( u <= 0 || u > G->numVertices)
+        return -1;
+
+    Digraph gT = reverseEdges(G);
+
+    unvisitAll(gT);
     unvisitAll(G);
-    for(int i = 1; i<= G->numVertices; i++)
+
+    for(int i = 1; i <= G->numVertices; i++)
         if(getMark(G,i) == UNVISITED)
             getVisitOrder(G,i);
 
-    Digraph gT = reverseEdges(G);
-    unvisitAll(gT);
-
-    while(length(B) != 0 )
+    while(length(path) != 0 )
     {
-        int v = B->head->data;
-        deleteFront(B);
+        int v = path->head->data;
+        deleteFront(path);
 
         if(getMark(gT,v) == UNVISITED)
         {
             DFS(gT,v);
 
-            if(search(C, u) == 1)
+            if(search(strongCC, u) == 1)
             {
                 freeDigraph(&gT);
-                return length(C);
+                return length(strongCC);
             }
 
-            freeList(&C);
-            C = newList();
+            freeList(&strongCC);
+            strongCC = newList();
         }
     }
 
@@ -145,39 +150,47 @@ int getNumSCCVertices(Digraph G, int u)
     return -1;
 }
 
-int intSameSCC(Digraph G, int u, int v)
+int inSameSCC(Digraph G, int u, int v)
 {
-    unvisitAll(G);
-    for(int i = 1; i<= G->numVertices; i++)
-        if(getMark(G,i) == UNVISITED)
-                getVisitOrder(G,i);
-
-    Digraph gT = reverseEdges(G);
-    unvisitAll(gT);
-
-    while(length(B) != 0 )
+    if( u <= 0 || v <= 0)
+        return -1;
+    else if( u > G->numVertices || v > G->numVertices)
+        return -1;
+    else
     {
-        int w = B->head->data;
-        deleteFront(B);
+        Digraph gT = reverseEdges(G);
 
-        if(getMark(gT,w) == UNVISITED)
+        unvisitAll(G);
+        unvisitAll(gT);
+
+        for (int i = 1; i <= G->numVertices; i++)
+            if (getMark(G, i) == UNVISITED)
+                getVisitOrder(G, i);
+
+        while (length(path) != 0)
         {
-            DFS(gT,w);
+            int w = path->head->data;
+            deleteFront(path);
 
-            if(search(C, u) == 1 && search(C, v) == 1)
+            if (getMark(gT, w) == UNVISITED)
             {
-                freeDigraph(&gT);
-                return 1;
-            }
+                DFS(gT, w);
 
-            freeList(&C);
-            C = newList();
+                if (search(strongCC, u) == 1 && search(strongCC, v) == 1)
+                {
+                    freeDigraph(&gT);
+                    return 1;
+                }
+
+                freeList(&strongCC);
+                strongCC = newList();
+            }
         }
+
+        freeDigraph(&gT);
     }
 
-    freeDigraph(&gT);
     return 0;
-
 }
 
 int addEdge(Digraph G, int u, int v)
@@ -255,28 +268,25 @@ void DFS(Digraph G, int w)
     }
 
 
-    prepend(C, w);
+    prepend(strongCC, w);
     setMark(G,w,ALL_DONE);
 }
 
-List getVisitOrder(Digraph G, int u)
+void getVisitOrder(Digraph G, int u)
 {
     setMark(G,u,IN_PROGRESS);
 
     for(NodeObj* v = getNeighbors(G,u)->head; v != NULL; v = getNextNode(v))
-    {
         if(getMark(G,v->data) == UNVISITED)
             getVisitOrder(G, v->data);
-    }
 
-    prepend(B, u);
+    prepend(path, u);
     setMark(G,u,ALL_DONE);
-
 }
 
 Digraph reverseEdges(Digraph G)
 {
-    Digraph g = newDigraph(G->numVertices);
+    Digraph gT = newDigraph(G->numVertices);
 
     for(int i = 1; i <= G->numVertices; i++)
     {
@@ -284,12 +294,12 @@ Digraph reverseEdges(Digraph G)
 
         while(tail != NULL)
         {
-            addEdge(g, tail->data, i);
+            addEdge(gT, tail->data, i);
             tail = getPrevNode(tail);
         }
     }
 
-    return g;
+    return gT;
 }
 
 void printDigraph(FILE* out, Digraph G)

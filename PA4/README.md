@@ -36,5 +36,8 @@
 - make makes DigraphProperties
 - ./DigraphProperties input.txt output.txt
 
+## Data Structures Used
+- Used three list, one to build a Directed Graph, another to store the path of vertices with the higher finish time, and one to store the vertices in a SCC. Also, I have two Directed Graphs, the original graph from the input file and a reversed graph made from the original one to find the SCCs.
+
 ## Author
 - **Alan Caro** 

@@ -28,8 +28,8 @@ char *buffer;
 int main(int argc, char **argv)
 {
     Digraph g;
-    B = newList();
-    C = newList();
+    path = newList();
+    strongCC = newList();
 
 
     if (argc != 3)
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
         fprintf(out, "ERROR");
         fclose(in);
         fclose(out);
-        freeList(&B);
+        freeList(&path);
         free(buffer);
         exit(1);
     }
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
             else
             {
                 fprintf(out,"%d", getCountSCC(g));
-                clear(C);
+                clear(strongCC);
                 fprintf(out, "\n");
             }
         }
@@ -171,9 +171,15 @@ int main(int argc, char **argv)
                 fprintf(out,"ERROR\n");
             else
             {
-                fprintf(out,"%d", getNumSCCVertices(g, a));
-                clear(C);
+                int returnValue = getNumSCCVertices(g, a);
+
+                if(returnValue == -1)
+                    fprintf(out, "ERROR");
+                else
+                    fprintf(out, "%d", returnValue);
+
                 fprintf(out, "\n");
+                clear(strongCC);
             }
         }
         else if(strstr(buffer, "InSameSCC") != NULL)
@@ -182,12 +188,17 @@ int main(int argc, char **argv)
                 fprintf(out,"ERROR\n");
             else
             {
-                int returnValue = intSameSCC(g, a, b);
-                clear(C);
-                if(returnValue == 1)
-                    fprintf(out,"YES\n");
+                int returnValue = inSameSCC(g, a, b);
+
+                if(returnValue == -1)
+                    fprintf(out, "ERROR");
+                else if(returnValue == 1)
+                    fprintf(out,"YES");
                 else
-                    fprintf(out, "NO\n");
+                    fprintf(out, "NO");
+
+                fprintf(out, "\n");
+                clear(strongCC);
             }
         }
         else
@@ -199,8 +210,8 @@ int main(int argc, char **argv)
     fclose(in);
     fclose(out);
     freeDigraph(&g);
-    freeList(&B);
-    freeList(&C);
+    freeList(&path);
+    freeList(&strongCC);
     free(buffer);
 
     return 0;
@@ -230,8 +241,8 @@ void parseEdges(char *buf, Digraph g)
             fprintf(out, "%d,%s", g->numVertices, buf);
             fprintf(out, "ERROR");
             freeDigraph(&g);
-            freeList(&B);
-            freeList(&C);
+            freeList(&path);
+            freeList(&strongCC);
             fclose(in);
             fclose(out);
             free(buffer);
@@ -242,8 +253,8 @@ void parseEdges(char *buf, Digraph g)
             fprintf(out, "%d,%s", g->numVertices, buf);
             fprintf(out, "ERROR");
             freeDigraph(&g);
-            freeList(&B);
-            freeList(&C);
+            freeList(&path);
+            freeList(&strongCC);
             fclose(in);
             fclose(out);
             free(buffer);
@@ -254,8 +265,8 @@ void parseEdges(char *buf, Digraph g)
             fprintf(out, "%d,%s", g->numVertices, buf);
             fprintf(out, "ERROR");
             freeDigraph(&g);
-            freeList(&B);
-            freeList(&C);
+            freeList(&path);
+            freeList(&strongCC);
             fclose(in);
             fclose(out);
             free(buffer);
