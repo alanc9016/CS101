@@ -95,9 +95,7 @@ void setMark(Digraph G, int u, int theMark);
     // Sets the mark for vertex u to be theMark.
     // theMark must be UNVISITED, IN_PROGRESS, or ALL_DONE.
 
-void DFS(Digraph G, int w);
-
-void getVisitOrder(Digraph G, int v);
+void DFS(Digraph G, int w, int x);
 
 Digraph reverseEdges(Digraph G);
 
