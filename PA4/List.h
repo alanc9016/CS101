@@ -52,6 +52,8 @@ int getValue(Node N);       // Returns the integer in Node N.
 int equals(List A, List B);   // Returns 1 if List A and List B are the same integer
 // sequence, otherwise returns 0.
 
+void copyList(List source, List dest);
+
 void clear(List L);            // Resets this List to the empty state.
 
 Node getFront(List L);     // If List is non-empty, returns the front Node, without

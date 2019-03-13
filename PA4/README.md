@@ -32,12 +32,16 @@
 ### Makefile
 - Will create an executable called DigraphProperties includes a clean  utility that removes all object files, including DigraphProperties. 
 
+## DigraphObj Extra Fields
+- SCC: List that contains all the SCCs the Digraph has.
+- SCCCount: Stores the number of SCCs the Digraph has.
+      
 ## Instructions
 - make makes DigraphProperties
 - ./DigraphProperties input.txt output.txt
 
 ## Data Structures Used
-- Used three list, one to build a Directed Graph, another to store the path of vertices with the higher finish time, and one to store the vertices in a SCC. Also, I have two Directed Graphs, the original graph from the input file and a reversed graph made from the original one to find the SCCs.
+- Used three list, one to build a Directed Graph, another to store the path of vertices, and one to store all the SCCs. This way I only have to recalculate the SCCs after a call to some SCC function and addEdge or deleteEdge were successful before the call. 
 
 ## Author
 - **Alan Caro** 

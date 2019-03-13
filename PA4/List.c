@@ -94,6 +94,18 @@ int equals(List A, List B)
     return 1;
 }
 
+void copyList(List source, List dest)
+{
+    NodeObj* headA = source->tail;
+
+    while(headA != NULL)
+    {
+        if(search(dest,headA->data) != 1)
+            prepend(dest,headA->data);
+        headA = getPrevNode(headA);
+    }
+}
+
 void clear(List L)
 {
     while(length(L) != 0)

@@ -16,13 +16,15 @@
 #define NOTFOUND -1
 
 List path;
-List strongCC;
+int modifiedSCC;
 
 typedef struct DigraphObj
 {
     int numVertices; //order
     int numEdges; //size
     int* visited;
+    List* SCC;
+    int SCCCount;
     List neighbors[];
 }DigraphObj;
 
@@ -62,6 +64,8 @@ int getNumSCCVertices(Digraph G, int u);
     // Returns the number of vertices (including u) that are in the same Strongly Connected Component
     // as u in G. Returns -1 if u is not a legal vertex.
 
+void getSCC(Digraph G);
+
 int inSameSCC(Digraph G, int u, int v);
     // Returns 1 if u and v are in the same Strongly Connected Component of G, and returns 0 if u and v
     // are not in the same Strongly Connected Component of the current digraph.
@@ -95,7 +99,7 @@ void setMark(Digraph G, int u, int theMark);
     // Sets the mark for vertex u to be theMark.
     // theMark must be UNVISITED, IN_PROGRESS, or ALL_DONE.
 
-void DFS(Digraph G, int w, int x);
+void DFS(Digraph G, int w, int x, List SCC);
 
 Digraph reverseEdges(Digraph G);
 

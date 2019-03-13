@@ -29,8 +29,6 @@ int main(int argc, char **argv)
 {
     Digraph g;
     path = newList();
-    strongCC = newList();
-
 
     if (argc != 3)
         exit(EXIT_FAILURE);
@@ -59,9 +57,11 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    g=newDigraph(vcount);
+    g = newDigraph(vcount);
     parseEdges(restOfTheBuffer+1,g);
 
+    getSCC(g);
+    modifiedSCC = 0;
 
     // Read next set of lines and perform actions
     while(fgets(buffer,n,in) != NULL)
@@ -134,6 +134,11 @@ int main(int argc, char **argv)
 
                 if(returnValue == -1)
                     fprintf(out, "ERROR");
+                else if(returnValue == 0)
+                {
+                    modifiedSCC = 1;
+                    fprintf(out,"%d", returnValue);
+                }
                 else
                     fprintf(out,"%d", returnValue);
                 fprintf(out, "\n");
@@ -149,6 +154,11 @@ int main(int argc, char **argv)
 
                 if(returnValue == -1)
                     fprintf(out, "ERROR");
+                else if(returnValue == 0)
+                {
+                    modifiedSCC = 1;
+                    fprintf(out,"%d", returnValue);
+                }
                 else
                     fprintf(out,"%d", returnValue);
                 fprintf(out, "\n");
@@ -160,8 +170,15 @@ int main(int argc, char **argv)
                 fprintf(out,"ERROR\n");
             else
             {
+                if(modifiedSCC == 1)
+                {
+                    for(int i = 0; i <= g->SCCCount; i++)
+                        clear(g->SCC[i]);
+                    getSCC(g);
+                    modifiedSCC = 0;
+                }
+
                 fprintf(out,"%d", getCountSCC(g));
-                clear(strongCC);
                 fprintf(out, "\n");
             }
         }
@@ -171,6 +188,14 @@ int main(int argc, char **argv)
                 fprintf(out,"ERROR\n");
             else
             {
+                if(modifiedSCC == 1)
+                {
+                    for(int i = 0; i <= g->SCCCount; i++)
+                        clear(g->SCC[i]);
+                    getSCC(g);
+                    modifiedSCC = 0;
+                }
+
                 int returnValue = getNumSCCVertices(g, a);
 
                 if(returnValue == -1)
@@ -179,7 +204,6 @@ int main(int argc, char **argv)
                     fprintf(out, "%d", returnValue);
 
                 fprintf(out, "\n");
-                clear(strongCC);
             }
         }
         else if(strstr(buffer, "InSameSCC") != NULL)
@@ -188,6 +212,14 @@ int main(int argc, char **argv)
                 fprintf(out,"ERROR\n");
             else
             {
+                if(modifiedSCC == 1)
+                {
+                    for(int i = 0; i <= g->SCCCount; i++)
+                        clear(g->SCC[i]);
+                    getSCC(g);
+                    modifiedSCC = 0;
+                }
+
                 int returnValue = inSameSCC(g, a, b);
 
                 if(returnValue == -1)
@@ -198,26 +230,24 @@ int main(int argc, char **argv)
                     fprintf(out, "NO");
 
                 fprintf(out, "\n");
-                clear(strongCC);
             }
         }
         else
             fprintf(out, "ERROR\n");
     }
 
-
     //Free all allocated data.
     fclose(in);
     fclose(out);
     freeDigraph(&g);
     freeList(&path);
-    freeList(&strongCC);
     free(buffer);
 
     return 0;
 }
 
-FILE *openFileOrExitOnFailure(char *filename, char *mode) {
+FILE *openFileOrExitOnFailure(char *filename, char *mode)
+{
     FILE *in = fopen(filename, mode);
     if (in == NULL) {
         fprintf(stderr, "unable to open file %s\n", filename);
@@ -242,7 +272,6 @@ void parseEdges(char *buf, Digraph g)
             fprintf(out, "ERROR");
             freeDigraph(&g);
             freeList(&path);
-            freeList(&strongCC);
             fclose(in);
             fclose(out);
             free(buffer);
@@ -254,7 +283,6 @@ void parseEdges(char *buf, Digraph g)
             fprintf(out, "ERROR");
             freeDigraph(&g);
             freeList(&path);
-            freeList(&strongCC);
             fclose(in);
             fclose(out);
             free(buffer);
@@ -266,7 +294,6 @@ void parseEdges(char *buf, Digraph g)
             fprintf(out, "ERROR");
             freeDigraph(&g);
             freeList(&path);
-            freeList(&strongCC);
             fclose(in);
             fclose(out);
             free(buffer);

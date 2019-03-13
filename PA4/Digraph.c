@@ -14,11 +14,14 @@ Digraph newDigraph(int numVertices)
     DigraphObj* G = malloc(sizeof(DigraphObj)  + (numVertices * sizeof(ListObj)) + (numVertices * sizeof(int)));
     G->numVertices = numVertices;
     G->visited = malloc(sizeof(int) + (numVertices * sizeof(ListObj)));
+    G->SCC = malloc(sizeof(int) + (numVertices) * sizeof(ListObj));
     G->numEdges = 0;
+    G->SCCCount = 0;
 
     for(int i = 0; i <= G->numVertices; i++)
     {
         G->neighbors[i] = newList();
+        G->SCC[i] = newList();
         G->visited[i] = UNVISITED;
     }
 
@@ -28,12 +31,15 @@ Digraph newDigraph(int numVertices)
 void freeDigraph(Digraph* pG)
 {
     for(int i = 0; i <= (*pG)->numVertices; i++)
+    {
         freeList(&(*pG)->neighbors[i]);
+        freeList(&(*pG)->SCC[i]);
+    }
 
     free((*pG)->visited);
+    free((*pG)->SCC);
     free(*pG);
 }
-
 
 int getOrder(Digraph G)
 {
@@ -84,33 +90,7 @@ List getNeighbors(Digraph G, int u)
 
 int getCountSCC(Digraph G)
 {
-    unvisitAll(G);
-
-    for(int u = 1; u <= G->numVertices; u++)
-        if(getMark(G, u) == UNVISITED)
-            DFS(G, u, 0);
-
-    Digraph GT = reverseEdges(G);
-    int count = 0;
-
-    unvisitAll(GT);
-
-    while(length(path) != 0 )
-    {
-        int x = path->head->data;
-        deleteFront(path);
-
-        if(getMark(GT,x) == UNVISITED)
-        {
-            DFS(GT, x, 1);
-            count++;
-        }
-
-        setMark(G,x, ALL_DONE);
-    }
-
-    freeDigraph(&GT);
-    return count;
+    return G->SCCCount;
 }
 
 int getNumSCCVertices(Digraph G, int u)
@@ -118,40 +98,44 @@ int getNumSCCVertices(Digraph G, int u)
     if( u <= 0 || u > G->numVertices)
         return -1;
 
+    for(int i = 0; i <= G->SCCCount; i++)
+    {
+        if(search(G->SCC[i], u) == 1)
+            return length(G->SCC[i]);
+    }
+
+    return -1;
+}
+
+void getSCC(Digraph G)
+{
     unvisitAll(G);
 
     for(int i = 1; i <= G->numVertices; i++)
         if(getMark(G, i) == UNVISITED)
-            DFS(G, i, 0);
+            DFS(G, i, 0, NULL);
 
     Digraph GT = reverseEdges(G);
 
     unvisitAll(GT);
+    int i = 0;
 
-    while(length(path) != 0 )
+    while(length(path) != 0)
     {
         int x = path->head->data;
         deleteFront(path);
 
-        if(getMark(GT, x) == UNVISITED)
+        if (getMark(GT, x) == UNVISITED)
         {
-            DFS(GT, x, 1);
-
-            if(search(strongCC, u) == 1)
-            {
-                freeDigraph(&GT);
-                return length(strongCC);
-            }
-
-            freeList(&strongCC);
-            strongCC = newList();
+            DFS(GT, x, 1, G->SCC[i]);
+            i++;
         }
 
         setMark(G, x, ALL_DONE);
     }
 
+    G->SCCCount = i;
     freeDigraph(&GT);
-    return -1;
 }
 
 int inSameSCC(Digraph G, int u, int v)
@@ -161,42 +145,10 @@ int inSameSCC(Digraph G, int u, int v)
     else if( u > G->numVertices || v > G->numVertices)
         return -1;
     else
-    {
-        unvisitAll(G);
-
-        for(int i = 1; i <= G->numVertices; i++)
-            if(getMark(G, i) == UNVISITED)
-                DFS(G, i, 0);
-
-        Digraph GT = reverseEdges(G);
-
-        unvisitAll(GT);
-
-        while(length(path) != 0)
-        {
-            int x = path->head->data;
-            deleteFront(path);
-
-            if (getMark(GT, x) == UNVISITED)
-            {
-                DFS(GT, x, 1);
-
-                if(search(strongCC, u) == 1 && search(strongCC, v) == 1)
-                {
-                    freeDigraph(&GT);
-                    return 1;
-                }
-
-                freeList(&strongCC);
-                strongCC = newList();
-            }
-
-            setMark(G, x, ALL_DONE);
-        }
-
-        freeDigraph(&GT);
-        return 0;
-    }
+        for(int i = 0; i <= G->SCCCount; i++)
+            if(search(G->SCC[i], u) == 1 && search(G->SCC[i], v) == 1)
+                return 1;
+    return 0;
 }
 
 int addEdge(Digraph G, int u, int v)
@@ -263,7 +215,7 @@ void setMark(Digraph G, int u, int theMark)
     G->visited[u] = theMark;
 }
 
-void DFS(Digraph G, int w, int x)
+void DFS(Digraph G, int w, int x, List SCC)
 {
     if(x == 1)
     {
@@ -272,10 +224,10 @@ void DFS(Digraph G, int w, int x)
         for(NodeObj* v = getNeighbors(G,w)->head; v != NULL; v = getNextNode(v))
         {
             if(getMark(G,v->data) == UNVISITED)
-                DFS(G,v->data, 1);
+                DFS(G,v->data, 1, SCC);
         }
 
-        prepend(strongCC, w);
+        prepend(SCC, w);
         setMark(G,w,ALL_DONE);
     }
     else if(x == 0)
@@ -284,7 +236,7 @@ void DFS(Digraph G, int w, int x)
 
         for(NodeObj* v = getNeighbors(G,w)->head; v != NULL; v = getNextNode(v))
             if(getMark(G,v->data) == UNVISITED)
-                DFS(G, v->data, 0);
+                DFS(G, v->data, 0, NULL);
 
         prepend(path, w);
         setMark(G,w,ALL_DONE);
